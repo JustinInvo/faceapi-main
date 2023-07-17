@@ -14,16 +14,20 @@ async function cargarCamera() {
 }
 
 // Cargar Modelos
-Promise.all([
-    // faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+async function cargarModelos() {
+  await Promise.all([
+    faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
     faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
     faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
     faceapi.nets.ageGenderNet.loadFromUri('/models'),
     faceapi.nets.faceExpressionNet.loadFromUri('/models'),
     faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
     faceapi.nets.faceLandmark68TinyNet.loadFromUri('/models'),
-    // faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-]).then()
+    faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+  ]);
+  cargarCamera()
+  // Aquí puedes agregar el código que deseas ejecutar después de que todos los modelos se hayan cargado
+}
 
 async function loadLabeledImages() {
   const labels = ['Eider','Emma Myers','Justin']
@@ -31,7 +35,8 @@ async function loadLabeledImages() {
     labels.map(async label => {
       const descriptions = []
       for (let i = 1; i <= 3; i++) {
-        const img = await faceapi.fetchImage(`./labeled_images/${label}/${i}.png`)
+        debugger;
+        const img = await faceapi.fetchImage(`/labeled_images/${label}/${i}.png`)
         // const detections = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor()
         const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
         console.log('detections', detections)
@@ -189,3 +194,4 @@ function enviarCorreo(nombreFace) {
   // Abrir el cliente de correo electrónico predeterminado del usuario con el enlace generado
   window.open(enlace);
 }
+cargarModelos()
